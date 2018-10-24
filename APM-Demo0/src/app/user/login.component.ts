@@ -1,17 +1,17 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 
 import { AuthService } from './auth.service';
 
 import {Store} from '@ngrx/store';
 import { select } from '@ngrx/store';
-import { MaskUserName } from './action/user.actions';
-import { Observable, Subscription } from 'rxjs/index';
-import { AppState } from '../state/app.state';
 
-import * as fromUsers from './state/user.reducer';
+import * as fromUsers from './state';
 import { takeWhile } from 'rxjs/internal/operators';
+import { AppState } from '../state/app.state';
+import * as fromUser from './action/user.actions';
+import { MaskUserName } from './action/user.actions';
 
 @Component({
   templateUrl: './login.component.html',
@@ -42,7 +42,6 @@ export class LoginComponent implements OnInit, OnDestroy {
       takeWhile(() => this.componentActive),
       select(fromUsers.getUsersMaskName)
     ).subscribe((maskUserName: boolean) => {
-    console.log('user', maskUserName);
         this.maskUserName = maskUserName;
     } );
   }
@@ -52,8 +51,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   checkChanged(value: boolean): void {
-    // this.maskUserName = value;
-    this.store.dispatch(new MaskUserName(value));
+    this.store.dispatch(new fromUser.MaskUserName(value));
   }
 
   login(loginForm: NgForm): void {
